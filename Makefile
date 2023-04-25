@@ -45,6 +45,7 @@ JUPYTER_CMD=jupyter notebook --no-browser --ip=0.0.0.0 --allow-root --NotebookAp
 APT?=apt-get -qq
 PIP?=pip install --progress-bar=off
 NEURO?=neuro
+REQUIREMENTS_PIP?=requirements.txt
 
 ##### HELP #####
 
