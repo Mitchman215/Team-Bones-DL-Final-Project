@@ -58,14 +58,14 @@ class m46_tf(tf.keras.Model):
                 filters=out_channels,
                 kernel_size=kernel_size,
                 padding="valid",
-                kernel_regularizer=tf.keras.initializers.HeNormal()), # missing fan_out and nonlinearity args provided to nn.init.kaiming_normal_
+                kernel_initializer=tf.keras.initializers.HeNormal()), # missing fan_out and nonlinearity args provided to nn.init.kaiming_normal_
             tf.keras.layers.ELU(),
             tf.keras.layers.BatchNormalization(momentum=0.1, epsilon=1e-05), # args determined by default of pytorch's BatchNorm2d: https://pytorch.org/docs/stable/generated/torch.nn.BatchNorm2d.html
             tf.keras.layers.Conv2D(
                 # in_channels=out_channels,
                 filters=out_channels,
                 kernel_size=1,
-                kernel_regularizer=tf.keras.initializers.HeNormal()),
+                kernel_initializer=tf.keras.initializers.HeNormal()),
             tf.keras.layers.ELU(),
             tf.keras.layers.BatchNormalization(momentum=0.1, epsilon=1e-05),
             tf.keras.layers.MaxPool2D(
@@ -76,11 +76,11 @@ class m46_tf(tf.keras.Model):
 
     # def _initialize_weights(self):
     #     for m in self.modules():
-    #         if isinstance(m, nn.Conv2d):
-    #             nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
-    #         elif isinstance(m, (nn.BatchNorm2d, nn.GroupNorm)):
-    #             nn.init.constant_(m.weight, 1)
-    #             nn.init.constant_(m.bias, 0)
+    #         if isinstance(m, tf.Conv2d):
+    #             tf.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+    #         elif isinstance(m, (tf.BatchNorm2d, tf.GroupNorm)):
+    #             tf.init.constant_(m.weight, 1)
+    #             tf.init.constant_(m.bias, 0)
 
     def call(self, x, labels=None):
         x = self.convolution(x)
@@ -102,9 +102,9 @@ class m46_tf(tf.keras.Model):
     def init_params(self) -> Dict[str, Any]:
         return self._params
 
-    # @property
-    # def loss_function(self) -> nn.modules.Module:
-    #     return self._loss_function
+    @property
+    def loss_function(self):# -> nn.modules.Module:
+        return self._loss_function
 
     @classmethod
     def from_ckpt(cls, checkpoint: Path) -> 'm46_tf':
@@ -156,7 +156,8 @@ if __name__ == '__main__':
 
     # Print the model
 
-    input_shape = (1, 500, 375)
+    # input_shape = (1, 500, 375)
+    input_shape = (256, 2000,1500,1)
     model = m46_tf(input_shape,model_type='age')
     model.build(input_shape)
     model.summary()
