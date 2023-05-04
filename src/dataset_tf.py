@@ -27,7 +27,6 @@ def split_dataset(df, test_fold, nfolds, root_dir, gender='a'):
     assert gender in ['a', 'm', 'f']
     assert 1 <= test_fold <= nfolds
     image_dir = Path('data/train/boneage-training-dataset')
-    image_dir = Path('data/hope/seeifworks')
     root_dir = Path(root_dir)
 
     print(image_dir)

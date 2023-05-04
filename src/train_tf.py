@@ -64,12 +64,12 @@ def main(args):
     # model.save(filepath=str(args.logdir / "model.h5"),save_format="tf")
 
 if __name__ == '__main__':
-    train_data_dir = DATA_PATH / 'hope'#'train'
+    train_data_dir = DATA_PATH / 'train'
     test_data_dir = DATA_PATH / 'test'
     crop_center = (1040, 800)
     crop_size = (2000, 1500)
     scale = 0.25
-    train_annotation_csv = DATA_PATH / 'hoping.csv'#'train.csv'
+    train_annotation_csv = DATA_PATH / 'train.csv'
     test_annotation_csv = DATA_PATH / 'test.csv'
     dataset_split = (10, 10)
     model_type = 'age'
