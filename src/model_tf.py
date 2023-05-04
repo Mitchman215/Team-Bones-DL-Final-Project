@@ -87,16 +87,16 @@ class m46_tf(tf.keras.Model):
         outputs = self.fcc(x)
         return outputs
 
-    def save(self, path_to_save: Path) -> None:
-        checkpoint = {
-            'model_state_dict': self.state_dict(),
-            'checkpoint_data': {'params': self._params}
-        }
-        # TODO find tf equivalent of this
-        # tf.keras.Model.save()
-        # torch.save(checkpoint, path_to_save)
-        self.save(path_to_save)
-        print(f'Model saved to {path_to_save}.')
+    # def save(self, path_to_save: Path) -> None:
+    #     checkpoint = {
+    #         'model_state_dict': self.state_dict(),
+    #         'checkpoint_data': {'params': self._params}
+    #     }
+    #     # TODO find tf equivalent of this
+    #     # tf.keras.Model.save()
+    #     # torch.save(checkpoint, path_to_save)
+    #     self.save(path_to_save)
+    #     print(f'Model saved to {path_to_save}.')
 
     @property
     def init_params(self) -> Dict[str, Any]:

@@ -59,23 +59,24 @@ def main(args):
         callbacks=callbacks,
         verbose=True
     )
+    model.save_weights(filepath=str(args.logdir / "model.h5"))
 
-    model.save(str(args.logdir / "model.h5"))
+    # model.save(filepath=str(args.logdir / "model.h5"),save_format="tf")
 
 if __name__ == '__main__':
-    train_data_dir = DATA_PATH / 'train'
+    train_data_dir = DATA_PATH / 'hope'#'train'
     test_data_dir = DATA_PATH / 'test'
     crop_center = (1040, 800)
     crop_size = (2000, 1500)
     scale = 0.25
-    train_annotation_csv = DATA_PATH / 'train.csv'
+    train_annotation_csv = DATA_PATH / 'hoping.csv'#'train.csv'
     test_annotation_csv = DATA_PATH / 'test.csv'
     dataset_split = (10, 10)
     model_type = 'age'
     prev_ckpt = None
     model_save_dir = MODELS_DIR
     n_epoch = 5
-    batch_size = 16
+    batch_size = 4
     n_gpu = 1
     n_workers = 0
     seed = 42
