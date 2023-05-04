@@ -30,7 +30,7 @@ class m46_tf(tf.keras.Model):
             self._vgg_block(128, 256, 5),  # Block 5
             self._vgg_block(256, 384, 6),  # Block 6
             tf.keras.layers.Flatten(),
-        ])
+        ], "Convolutions")
 
         self.fcc = tf.keras.Sequential([
             tf.keras.layers.Dropout(0.3),
@@ -40,7 +40,7 @@ class m46_tf(tf.keras.Model):
             tf.keras.layers.Dense(2048),
             tf.keras.layers.ELU(),
             tf.keras.layers.Dense(1),
-        ])
+        ], "fcc")
         if self.model_type == 'gender':
             self.fcc.add(tf.keras.activations.sigmoid())
 
@@ -156,8 +156,7 @@ if __name__ == '__main__':
 
     # Print the model
 
-    # input_shape = (1, 500, 375)
-    input_shape = (256, 2000,1500,1)
+    input_shape = (None, 2000, 1500, 1)
     model = m46_tf(input_shape,model_type='age')
     model.build(input_shape)
     model.summary()
