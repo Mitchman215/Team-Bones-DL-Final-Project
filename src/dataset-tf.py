@@ -3,6 +3,7 @@ from pathlib import Path
 import pandas as pd
 import cv2
 import numpy as np
+import tensorflow as tf
 from const import DATA_PATH
 
 # from torchvision.datasets import VisionDataset
@@ -155,7 +156,7 @@ if __name__ == '__main__':
     fig = plt.figure(figsize=(18, 8))
     for i, sample in enumerate(islice(boneage_dataset, nimages), 1):
         image, label, img_id = sample['image'], sample['label'], sample['id']
-        if torch.is_tensor(image):
+        if tf.is_tensor(image):
             image = np.squeeze(image.numpy())
             label = label.item()
         if model_type == 'age':
