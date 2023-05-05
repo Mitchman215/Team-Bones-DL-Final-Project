@@ -1,10 +1,7 @@
 from pathlib import Path
 from typing import Dict, Any
 
-# import torch
 import tensorflow as tf
-from collections import OrderedDict
-# import torch.nn as nn
 
 
 class m46_tf(tf.keras.Model):
@@ -23,12 +20,12 @@ class m46_tf(tf.keras.Model):
         }
 
         self.convolution = tf.keras.Sequential([
-            self._vgg_block(self.nchannel, 32, 1),  # Block 1
-            self._vgg_block(32, 64, 2),  # Block 2
-            self._vgg_block(64, 128, 3),  # Block 3
-            self._vgg_block(128, 128, 4),  # Block 4
-            self._vgg_block(128, 256, 5),  # Block 5
-            self._vgg_block(256, 384, 6),  # Block 6
+            m46_tf._vgg_block(32),  # Block 1
+            m46_tf._vgg_block(64),  # Block 2
+            m46_tf._vgg_block(128),  # Block 3
+            m46_tf._vgg_block(128),  # Block 4
+            m46_tf._vgg_block(256),  # Block 5
+            m46_tf._vgg_block(384),  # Block 6
             tf.keras.layers.Flatten(),
         ], "Convolutions")
 
@@ -50,8 +47,8 @@ class m46_tf(tf.keras.Model):
             self._loss_function = tf.keras.losses.BinaryCrossentropy()
         # self._initialize_weights() #DO WE NEED THIS
 
-    def _vgg_block(self, in_channels, out_channels, block_num, kernel_size=3):
-        b = f'block{block_num}_'
+    @staticmethod
+    def _vgg_block(out_channels, kernel_size=3):
         vgg_block = tf.keras.Sequential([
             tf.keras.layers.Conv2D(
                 # in_channels=in_channels,
@@ -74,13 +71,6 @@ class m46_tf(tf.keras.Model):
         ])
         return vgg_block
 
-    # def _initialize_weights(self):
-    #     for m in self.modules():
-    #         if isinstance(m, tf.Conv2d):
-    #             tf.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
-    #         elif isinstance(m, (tf.BatchNorm2d, tf.GroupNorm)):
-    #             tf.init.constant_(m.weight, 1)
-    #             tf.init.constant_(m.bias, 0)
 
     def call(self, x, labels=None):
         x = self.convolution(x)
