@@ -23,7 +23,7 @@ def main(args):
     model = m46_tf(input_shape=input_shape, model_type=args.model_type)
     optimizer = Adam(lr=2e-5, beta_1=0.5, beta_2=0.999)
 
-    model.compile(optimizer=optimizer, loss=model.loss_function, metrics=['accuracy'])
+    model.compile(optimizer=optimizer, loss=model.loss_function, metrics=[tf.keras.metrics.MeanAbsoluteError()])
 
     callbacks = [EarlyStopping(patience=10, monitor='val_loss', restore_best_weights=True)]
     checkpoint_path = str(args.logdir / "model.ckpt")
@@ -32,34 +32,36 @@ def main(args):
     train_datagen = ImageDataGenerator()
     test_datagen = ImageDataGenerator()
 
-    train_generator = train_datagen.flow_from_directory(
-        directory=args.train_data_dir,
-        target_size=(input_shape[0], input_shape[1]),
-        color_mode="grayscale",
-        batch_size=args.batch_size,
-        class_mode="binary",
-        shuffle=True,
-        seed=args.seed
-    )
+    # train_generator = train_datagen.flow_from_directory(
+    #     directory=args.train_data_dir,
+    #     target_size=(input_shape[0], input_shape[1]),
+    #     color_mode="grayscale",
+    #     batch_size=args.batch_size,
+    #     class_mode="binary",
+    #     shuffle=True,
+    #     seed=args.seed
+    # )
 
-    validation_generator = test_datagen.flow_from_directory(
-        directory=args.train_data_dir,
-        target_size=(input_shape[0], input_shape[1]),
-        color_mode="grayscale",
-        batch_size=args.batch_size,
-        class_mode="binary",
-        shuffle=True,
-        seed=args.seed
-    )
+    # validation_generator = test_datagen.flow_from_directory(
+    #     directory=args.train_data_dir,
+    #     target_size=(input_shape[0], input_shape[1]),
+    #     color_mode="grayscale",
+    #     batch_size=args.batch_size,
+    #     class_mode="binary",
+    #     shuffle=True,
+    #     seed=args.seed
+    # )
 
     history = model.fit(
-        train_generator,
+        # train_generator,
+        train_loader,
         epochs=args.n_epoch,
-        validation_data=validation_generator,
+        validation_data=validation_loader,#validation_generator,
         callbacks=callbacks,
         verbose=True
     )
-    model.save_weights(filepath=str(args.logdir / "model.h5"))
+    # model.save_weights(filepath=str(args.logdir / "model_weights"))
+    
 
     # model.save(filepath=str(args.logdir / "model.h5"),save_format="tf")
 
@@ -71,12 +73,11 @@ if __name__ == '__main__':
     scale = 0.25
     train_annotation_csv = DATA_PATH / 'train.csv'
     test_annotation_csv = DATA_PATH / 'test.csv'
-    dataset_split = (10, 10)
     model_type = 'age'
     prev_ckpt = None
     model_save_dir = MODELS_DIR
-    n_epoch = 5
-    batch_size = 4
+    n_epoch = 3
+    batch_size = 3
     n_gpu = 1
     n_workers = 0
     seed = 42
@@ -91,7 +92,6 @@ if __name__ == '__main__':
         scale=scale,
         train_annotation_csv=train_annotation_csv,
         test_annotation_csv=test_annotation_csv,
-        dataset_split=dataset_split,
         model_type=model_type,
         prev_ckpt=prev_ckpt,
         model_save_dir=model_save_dir,
