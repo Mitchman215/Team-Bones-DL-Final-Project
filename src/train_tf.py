@@ -1,5 +1,7 @@
 from argparse import Namespace
 import warnings
+
+from matplotlib import pyplot as plt
 from model_tf import m46_tf
 warnings.filterwarnings("ignore")
 
@@ -10,7 +12,6 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from pathlib import Path
 import numpy as np
 
-from model import m46
 from dataset_tf import get_loaders
 from const import LOG_DIR, DATA_PATH, MODELS_DIR
 
@@ -25,12 +26,24 @@ def main(args):
 
     model.compile(optimizer=optimizer, loss=model.loss_function, metrics=[tf.keras.metrics.MeanAbsoluteError()])
 
-    callbacks = [EarlyStopping(patience=10, monitor='val_loss', restore_best_weights=True)]
-    checkpoint_path = str(args.logdir / "model.ckpt")
-    callbacks += [ModelCheckpoint(filepath=checkpoint_path, save_best_only=True)]
+    # callbacks = [EarlyStopping(patience=10, monitor='val_loss', restore_best_weights=True)]
 
-    train_datagen = ImageDataGenerator()
-    test_datagen = ImageDataGenerator()
+    class Histories(tf.keras.callbacks.Callback):
+        def on_train_begin(self,logs={}):
+            self.losses = []
+            self.val_losses = []
+
+        def on_batch_end(self, batch, logs={}):
+            self.losses.append(logs.get('loss'))
+            self.val_losses.append(logs.get('val_loss'))
+    
+    callbacks : Histories = Histories()
+
+    checkpoint_path = str(args.logdir / "model.ckpt")
+    # callbacks += [ModelCheckpoint(filepath=checkpoint_path, save_best_only=True)]
+
+    # train_datagen = ImageDataGenerator()
+    # test_datagen = ImageDataGenerator()
 
     # train_generator = train_datagen.flow_from_directory(
     #     directory=args.train_data_dir,
@@ -57,16 +70,25 @@ def main(args):
         train_loader,
         epochs=args.n_epoch,
         validation_data=validation_loader,#validation_generator,
-        callbacks=callbacks,
+        callbacks=[callbacks],
         verbose=True
     )
-    # model.save_weights(filepath=str(args.logdir / "model_weights"))
+    step_count = range(1, len(callbacks.losses) + 1)
+    plt.plot(step_count, callbacks.losses, 'b-')
+    plt.xlabel('Steps')
+    plt.ylabel('Loss (months)')
+    plt.show()
+
+
+
+    model.save_weights(filepath=str(args.logdir / "model_weights.h5"))
+    print("MODEL SAVED")
     
 
     # model.save(filepath=str(args.logdir / "model.h5"),save_format="tf")
 
 if __name__ == '__main__':
-    train_data_dir = DATA_PATH / 'train'
+    train_data_dir = DATA_PATH / 'hope'
     test_data_dir = DATA_PATH / 'test'
     crop_center = (1040, 800)
     crop_size = (2000, 1500)
@@ -76,7 +98,7 @@ if __name__ == '__main__':
     model_type = 'age'
     prev_ckpt = None
     model_save_dir = MODELS_DIR
-    n_epoch = 3
+    n_epoch = 1
     batch_size = 3
     n_gpu = 1
     n_workers = 0

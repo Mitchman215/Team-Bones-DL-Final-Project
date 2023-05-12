@@ -77,76 +77,22 @@ class m46_tf(tf.keras.Model):
         outputs = self.fcc(x)
         return outputs
 
-    # def save(self, path_to_save: Path) -> None:
-    #     checkpoint = {
-    #         'model_state_dict': self.state_dict(),
-    #         'checkpoint_data': {'params': self._params}
-    #     }
-    #     # TODO find tf equivalent of this
-    #     # tf.keras.Model.save()
-    #     # torch.save(checkpoint, path_to_save)
-    #     self.save(path_to_save)
-    #     print(f'Model saved to {path_to_save}.')
 
     @property
     def init_params(self) -> Dict[str, Any]:
         return self._params
 
     @property
-    def loss_function(self):# -> nn.modules.Module:
+    def loss_function(self):
         return self._loss_function
-
-    @classmethod
-    def from_ckpt(cls, checkpoint: Path) -> 'm46_tf':
-        # ckpt = torch.load(checkpoint, map_location='cpu') if type(checkpoint) == Path else checkpoint
-        # model = cls(**ckpt['checkpoint_data']['params'])
-        # model.load_state_dict(ckpt['model_state_dict'])
-        # if type(checkpoint) == Path:
-        #     print(f'Model was loaded from {checkpoint}.')
-        # else:
-        #     print(f'Model was loaded from dictionary.')
-        # return model
-        new_model = tf.keras.models.load_model(checkpoint)
-        new_model.summary()
-        return new_model
-
-
-
-# def convert_checkpoint(checkpoint: Path or OrderedDict,
-#                        params: Dict[str, Any]) -> Dict[str, Any]:
-#     """make use of previous checkpoint format"""
-
-#     ckpt = torch.load(checkpoint, map_location='cpu') if isinstance(checkpoint, Path) else checkpoint
-#     updates = {'.predictions.': '.preds.', '.prediction_probs.': '.probs.'}
-#     for k in list(ckpt):
-#         upd = next((u for u in updates if u in k), None)
-#         if upd:
-#             ckpt[k.replace(upd, updates[upd])] = ckpt.pop(k)
-#     checkpoint = {
-#         'model_state_dict': ckpt,
-#         'checkpoint_data': {'params': params}
-#     }
-#     return checkpoint
 
 
 if __name__ == '__main__':
-    # Number of GPUs available. Use 0 for CPU mode.
-    # ngpu = 1
-
-    # # Decide which device we want to run on
-    # device = torch.device("cuda:0" if (torch.cuda.is_available() and ngpu > 0) else "cpu")
-
-    # # Create the model
-    # input_shape = (1, 500, 375)
-    # model = m46_tf(input_shape, model_type='age').to(device)
-
-    # # Handle multi-gpu if desired
-    # if (device.type == 'cuda') and (ngpu > 1):
-    #     model = nn.DataParallel(model, list(range(ngpu)))
-
-    # Print the model
+    # Create the model
 
     input_shape = (None, 2000, 1500, 1)
     model = m46_tf(input_shape,model_type='age')
     model.build(input_shape)
+    
+    # Print the model
     model.summary()

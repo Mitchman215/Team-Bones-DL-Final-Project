@@ -1,5 +1,7 @@
 from argparse import Namespace
 import warnings
+
+from matplotlib import pyplot as plt
 from model_tf import m46_tf
 warnings.filterwarnings("ignore")
 
@@ -28,12 +30,26 @@ def main(args):
     
 
     checkpoint_path = str(args.logdir / "model.h5")
+    # checkpoint_path = str(args.logdir / "model_weights.h5")
     # str(args.logdir / "model.ckpt/variables/variables.index")
     # str(args.logdir / "model.h5") 
     model.load_weights(filepath=checkpoint_path)
 
     loss, acc = model.evaluate(test_loader_images, test_labels, verbose=2)
-    print("Restored model, accuracy: {:5.2f}%".format(100 * acc))
+    # y_pred = model.predict(test_loader_images, verbose=2)
+    # print(y_pred)
+    print("Restored model, accuracy: {:5.2f}".format(acc))
+
+    # Plot of testing results
+    # plt.scatter(test_labels, y_pred, label='Data')
+    # p1 = max(max(y_pred), max(test_labels))
+    # p2 = min(min(y_pred), min(test_labels))
+    # plt.plot([p1, p2], [p1, p2], color='k', label='Predictions')
+    # # plt.plot(x, y, color='k', label='Predictions')
+    # plt.xlabel('True Bone Age')
+    # plt.ylabel('Predicted Bone Age')
+    # plt.legend()
+    # plt.show()
 
 
 if __name__ == '__main__':
