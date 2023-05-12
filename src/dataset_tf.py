@@ -79,7 +79,7 @@ def split_dataset(df, root_dir, isTraining, gender='a'):
 def get_loaders(args: Namespace):
     train_annotation_frame = pd.read_csv(args.train_annotation_csv)
     train_df, validation_df = split_dataset(train_annotation_frame, args.train_data_dir, True, gender='a')
-    return train_df, validation_df #data_frames
+    return train_df.map(augment_images), validation_df.map(augment_images) #data_frames
 
 def get_test_loader(args: Namespace):
     test_annotation_frame = pd.read_csv(args.test_annotation_csv)
@@ -92,7 +92,13 @@ def get_test_loader(args: Namespace):
 
     return test_images, test_labels
 
-
+def augment_images(images,labels):
+    data_augmentation = tf.keras.Sequential([
+        tf.keras.layers.RandomFlip("horizontal_and_vertical"),
+        tf.keras.layers.RandomRotation(0.2),
+    ])
+    return data_augmentation(images), labels
+    
 
 if __name__ == '__main__':
     model_type = 'age'

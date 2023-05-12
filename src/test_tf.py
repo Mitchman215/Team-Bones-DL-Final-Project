@@ -35,7 +35,7 @@ def main(args):
     # str(args.logdir / "model.h5") 
     model.load_weights(filepath=checkpoint_path)
 
-    loss, acc = model.evaluate(test_loader_images, test_labels, verbose=2)
+    loss, acc = model.evaluate(test_loader_images, test_labels, verbose=2,isTraining = False)
     # y_pred = model.predict(test_loader_images, verbose=2)
     # print(y_pred)
     print("Restored model, accuracy: {:5.2f}".format(acc))

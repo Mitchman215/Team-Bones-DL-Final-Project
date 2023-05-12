@@ -18,7 +18,10 @@ class m46_tf(tf.keras.Model):
             'input_shape': input_shape,
             'model_type': model_type
         }
-
+        self.data_augmentation = tf.keras.Sequential([
+            tf.keras.layers.RandomFlip("horizontal_and_vertical"),
+            tf.keras.layers.RandomRotation(0.2),
+            ])
         self.convolution = tf.keras.Sequential([
             m46_tf._vgg_block(32),  # Block 1
             m46_tf._vgg_block(64),  # Block 2
@@ -72,7 +75,12 @@ class m46_tf(tf.keras.Model):
         return vgg_block
 
 
-    def call(self, x, labels=None):
+    def call(self, x, labels=None, isTraining = True):
+        if isTraining:
+            x = self.data_augmentation(x)
+            print("THIS WORKS LIKE I WANT IT TO")
+        else:
+            print("THIS DOESNT WORK LIKE I WANT IT TO")
         x = self.convolution(x)
         outputs = self.fcc(x)
         return outputs
@@ -93,6 +101,6 @@ if __name__ == '__main__':
     input_shape = (None, 2000, 1500, 1)
     model = m46_tf(input_shape,model_type='age')
     model.build(input_shape)
-    
+
     # Print the model
     model.summary()

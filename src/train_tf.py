@@ -66,12 +66,11 @@ def main(args):
     # )
 
     history = model.fit(
-        # train_generator,
         train_loader,
         epochs=args.n_epoch,
         validation_data=validation_loader,#validation_generator,
         callbacks=[callbacks],
-        verbose=True
+        verbose=True,
     )
     step_count = range(1, len(callbacks.losses) + 1)
     plt.plot(step_count, callbacks.losses, 'b-')
@@ -88,7 +87,7 @@ def main(args):
     # model.save(filepath=str(args.logdir / "model.h5"),save_format="tf")
 
 if __name__ == '__main__':
-    train_data_dir = DATA_PATH / 'hope'
+    train_data_dir = DATA_PATH / 'train'
     test_data_dir = DATA_PATH / 'test'
     crop_center = (1040, 800)
     crop_size = (2000, 1500)
